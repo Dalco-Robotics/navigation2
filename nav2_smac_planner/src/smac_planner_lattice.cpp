@@ -93,6 +93,9 @@ void SmacPlannerLattice::configure(
     node, name + ".cache_obstacle_heuristic", rclcpp::ParameterValue(false));
   node->get_parameter(name + ".cache_obstacle_heuristic", _search_info.cache_obstacle_heuristic);
   nav2_util::declare_parameter_if_not_declared(
+    node, name + ".prefer_forward_expansions", rclcpp::ParameterValue(false));
+  node->get_parameter(name + ".prefer_forward_expansions", _search_info.prefer_forward_expansions);
+  nav2_util::declare_parameter_if_not_declared(
     node, name + ".reverse_penalty", rclcpp::ParameterValue(2.0));
   node->get_parameter(name + ".reverse_penalty", _search_info.reverse_penalty);
   nav2_util::declare_parameter_if_not_declared(
@@ -568,6 +571,9 @@ SmacPlannerLattice::dynamicParametersCallback(std::vector<rclcpp::Parameter> par
         }
       } else if (name == _name + ".analytic_expansion_max_cost_override") {
         _search_info.analytic_expansion_max_cost_override = parameter.as_bool();
+        reinit_a_star = true;
+      } else if (name == _name + ".prefer_forward_expansions") {
+        _search_info.prefer_forward_expansions = parameter.as_bool();
         reinit_a_star = true;
       }
     } else if (type == ParameterType::PARAMETER_INTEGER) {

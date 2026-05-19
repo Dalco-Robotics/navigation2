@@ -146,6 +146,10 @@ void SmacPlannerHybrid::configure(
     node, name + ".downsample_obstacle_heuristic", rclcpp::ParameterValue(true));
   node->get_parameter(
     name + ".downsample_obstacle_heuristic", _search_info.downsample_obstacle_heuristic);
+  nav2_util::declare_parameter_if_not_declared(
+    node, name + ".prefer_forward_expansions", rclcpp::ParameterValue(false));
+  node->get_parameter(
+    name + ".prefer_forward_expansions", _search_info.prefer_forward_expansions);
 
   nav2_util::declare_parameter_if_not_declared(
     node, name + ".analytic_expansion_max_length", rclcpp::ParameterValue(3.0));
@@ -661,6 +665,9 @@ SmacPlannerHybrid::dynamicParametersCallback(std::vector<rclcpp::Parameter> para
         }
       } else if (name == _name + ".analytic_expansion_max_cost_override") {
         _search_info.analytic_expansion_max_cost_override = parameter.as_bool();
+        reinit_a_star = true;
+      } else if (name == _name + ".prefer_forward_expansions") {
+        _search_info.prefer_forward_expansions = parameter.as_bool();
         reinit_a_star = true;
       }
     } else if (type == ParameterType::PARAMETER_INTEGER) {
