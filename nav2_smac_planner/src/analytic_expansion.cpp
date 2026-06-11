@@ -185,10 +185,13 @@ typename AnalyticExpansion<NodeT>::NodePtr AnalyticExpansion<NodeT>::tryAnalytic
           }
 
           if (best_dubins_score < best_score) {
-            std::cout << "Analytic expansion prefer forward. Dubins: " << best_dubins_score << 
+            std::cout << "Cuspless global plan generated successfully. Scores are Dubins: " << best_dubins_score << 
             " vs Reeds-Shepp: " << best_score << std::endl;
             analytic_nodes = dubins_nodes;
             best_score = best_dubins_score;
+          } else {
+            std::cout << "Unable to generate cuspless global plan. Scores are Dubins: " << best_dubins_score << 
+            " vs Reeds-Shepp: " << best_score << std::endl;
           }
         }
 
@@ -332,7 +335,6 @@ typename AnalyticExpansion<NodeT>::AnalyticExpansionNodes AnalyticExpansion<Node
   }
 
   if (failure) {
-    std::cout << "Analytic expansion rejected due to failure." << std::endl;
     return AnalyticExpansionNodes();
   }
 
