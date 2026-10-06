@@ -232,7 +232,7 @@ typename AnalyticExpansion<NodeT>::AnalyticExpansionNodes AnalyticExpansion<Node
   // 4-5x the minimum turning radius being used, or planning times will begin to spike.
   bool is_dubins = dynamic_cast<ompl::base::DubinsStateSpace *>(state_space.get()) != nullptr;
   if (is_dubins && _search_info.prefer_forward_expansions) {
-    if (d > _search_info.analytic_expansion_max_length*3 || d < sqrt_2) {
+    if (d > _search_info.analytic_expansion_max_length*_search_info.forward_expansion_multiplier || d < sqrt_2) {
       return AnalyticExpansionNodes();
     }
   } else if (d > _search_info.analytic_expansion_max_length || d < sqrt_2) {
