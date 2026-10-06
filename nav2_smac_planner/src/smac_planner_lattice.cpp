@@ -93,6 +93,9 @@ void SmacPlannerLattice::configure(
     node, name + ".cache_obstacle_heuristic", rclcpp::ParameterValue(false));
   node->get_parameter(name + ".cache_obstacle_heuristic", _search_info.cache_obstacle_heuristic);
   nav2_util::declare_parameter_if_not_declared(
+    node, name + ".prefer_forward_expansions", rclcpp::ParameterValue(false));
+  node->get_parameter(name + ".prefer_forward_expansions", _search_info.prefer_forward_expansions);
+  nav2_util::declare_parameter_if_not_declared(
     node, name + ".reverse_penalty", rclcpp::ParameterValue(2.0));
   node->get_parameter(name + ".reverse_penalty", _search_info.reverse_penalty);
   nav2_util::declare_parameter_if_not_declared(
@@ -115,6 +118,9 @@ void SmacPlannerLattice::configure(
   node->get_parameter(name + ".analytic_expansion_ratio", _search_info.analytic_expansion_ratio);
   nav2_util::declare_parameter_if_not_declared(
     node, name + ".analytic_expansion_max_cost", rclcpp::ParameterValue(200.0));
+  node->get_parameter(name + ".forward_expansion_multiplier", _search_info.forward_expansion_multiplier);
+  nav2_util::declare_parameter_if_not_declared(
+    node, name + ".forward_expansion_multiplier", rclcpp::ParameterValue(3.0));
   node->get_parameter(
     name + ".analytic_expansion_max_cost", _search_info.analytic_expansion_max_cost);
   nav2_util::declare_parameter_if_not_declared(
@@ -549,6 +555,9 @@ SmacPlannerLattice::dynamicParametersCallback(std::vector<rclcpp::Parameter> par
       } else if (name == _name + ".analytic_expansion_max_cost") {
         reinit_a_star = true;
         _search_info.analytic_expansion_max_cost = static_cast<float>(parameter.as_double());
+      } else if (name == _name + ".forward_expansion_multiplier") {
+        reinit_a_star = true;
+        _search_info.forward_expansion_multiplier = static_cast<float>(parameter.as_double());
       }
     } else if (type == ParameterType::PARAMETER_BOOL) {
       if (name == _name + ".allow_unknown") {
@@ -568,6 +577,9 @@ SmacPlannerLattice::dynamicParametersCallback(std::vector<rclcpp::Parameter> par
         }
       } else if (name == _name + ".analytic_expansion_max_cost_override") {
         _search_info.analytic_expansion_max_cost_override = parameter.as_bool();
+        reinit_a_star = true;
+      } else if (name == _name + ".prefer_forward_expansions") {
+        _search_info.prefer_forward_expansions = parameter.as_bool();
         reinit_a_star = true;
       }
     } else if (type == ParameterType::PARAMETER_INTEGER) {
